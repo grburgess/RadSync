@@ -10,7 +10,7 @@ class Synchronator(object):
         self._Ngrid = Ngrid
         self._constFactor = 23532.535
         self._gammaFlag = False
-    def SetParameters(self, A,  gamma_min,  gamma_max,  index,  tCoolFrac):
+    def SetParameters(self, A,  gamma_min,  gamma_max,  index,  tCoolFrac,silent=True):
 
         self._A = A
         self._gamma_min = gamma_min
@@ -20,10 +20,10 @@ class Synchronator(object):
         self._tCoolFrac = tCoolFrac
         self._syncCool = 1./(A*A*self._constFactor)  
         self._tCool = self._syncCool*tCoolFrac
-
-        print "Cooling electrons...\n"
-        print "Synchrotron cooling time is %.2f s"%self._syncCool
-        print "Cooling electrons for %.2f s"%self._tCool
+        if not silent:
+            print "Cooling electrons...\n"
+            print "Synchrotron cooling time is %.2e s"%self._syncCool
+            print "Cooling electrons for %.2e s"%self._tCool
         
         self._fgammma = electrons(A,  gamma_min,  gamma_max,  index,  self._tCool, self._Ngrid )
         step = np.exp(1./self._Ngrid*np.log(gamma_max*1.1))
