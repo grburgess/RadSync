@@ -27,7 +27,7 @@ class Synchronator(object):
         
         self._fgammma = electrons(A,  gamma_min,  gamma_max,  index,  self._tCool, self._Ngrid )
         step = np.exp(1./self._Ngrid*np.log(gamma_max*1.1))
-        self._gamma = np.power(step,arange(self._Ngrid))
+        self._gamma = np.power(step,np.arange(self._Ngrid))
         self._gammaFlag = True
 
     def GetEmisson(self,ene):
