@@ -9,8 +9,8 @@ class Synchronator(object):
     def __init__(self, Ngrid=500):
         self._Ngrid = Ngrid
         self._constFactor = 23532.535
-
-    def SetParameters(A,  gamma_min,  gamma_max,  index,  tCoolFrac):
+        self._gammaFlag = False
+    def SetParameters(self, A,  gamma_min,  gamma_max,  index,  tCoolFrac):
 
         self._A = A
         self._gamma_min = gamma_min
@@ -18,7 +18,7 @@ class Synchronator(object):
         self._index = index
 
         self._tCoolFrac = tCoolFrac
-        self._syncCool = 1./(A*A*self._factor)  
+        self._syncCool = 1./(A*A*self._constFactor)  
         self._tCool = self._syncCool*tCoolFrac
 
         print "Cooling electrons...\n"
