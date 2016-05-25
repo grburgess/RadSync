@@ -10,7 +10,7 @@ class Synchronator(object):
         self._Ngrid = Ngrid
         self._constFactor = 25352.525
         self._gammaFlag = False
-    def SetParameters(self,ne , A,BG ,  gamma_min,  gamma_max,  index,  tCoolFrac,steps,silent=True):
+    def SetParameters(self,ne , A,BG ,  gamma_min,  gamma_max,  index,  gamma_cool,silent=True):
 
         self._ne = ne
         self._A = A
@@ -18,14 +18,14 @@ class Synchronator(object):
         self._gamma_max = gamma_max
         self._index = index
         self._BG = BG 
-        self._tCoolFrac = tCoolFrac
+        
         self._syncCool = 1./(A*A*self._constFactor)  
-        self._tCool = tCoolFrac #self._syncCool*tCoolFrac
-
+        
+        
         self._DT = self._syncCool/(gamma_max/1.)
-
-        
-        
+        #mincool = self._syncCool/(gamma_min/1.)
+        #print mincool
+        self._steps = np.round(gamma_max/gamma_cool)
 
         
         if not silent:
@@ -33,7 +33,7 @@ class Synchronator(object):
             print "Synchrotron cooling time is %.2e s"%self._syncCool
             print "Time step is for %.2e s"%self._DT
             #print self._syncCool / gamma_max
-        self._fgammma = ne*np.array(electrons(ne, A,  gamma_min,  gamma_max,  index,  self._DT,  self._Ngrid, steps ))
+        
 
         step = np.exp(1./self._Ngrid*np.log(gamma_max*1.1))
 
@@ -41,25 +41,17 @@ class Synchronator(object):
         self._gammaFlag = True
 
 
-        if not silent:
-            print "Emitted %.3f percent of the indejected energy"%(100.*(1.-self._epsilon(steps)))
+        #if not silent:
+        #    print "Emitted %.3f percent of the indejected energy"%(100.*(1.-self._epsilon(steps)))
 
-    def _old_GetEmisson(self,ene):
-        if self._gammaFlag:
-            norm = self._BG * self._A *3.7797251E-22
-            return norm*synchrotronPy(ene,
-                                       self._BG*self._A,
-                                        self._gamma,
-                                        self._fgammma,
-                                        self._Ngrid)
-        else:
-            print "No Parameters Set!"
-            return
                
-    def GetEmisson(self,ene,steps):
+    def GetEmisson(self,ene):
         if self._gammaFlag:
             norm = self._BG * self._A *3.7797251E-22
-            return norm*np.array(emission(ene,
+            erg2keV = 6.242E8
+            if self._steps ==0:
+                return np.zeros_like(ene)
+            return erg2keV*norm*np.array(emission(ene,
                                        self._ne,
                                        self._A,
                                        self._BG,
@@ -68,7 +60,7 @@ class Synchronator(object):
                                        self._index,
                                        self._DT,
                                        self._Ngrid,
-                                       steps))
+                                       self._steps))
         else:
             print "No Parameters Set!"
             return
@@ -79,6 +71,7 @@ class Synchronator(object):
         return self._gamma
 
     def GetGammaDist(self):
+        self._fgammma = np.array(electrons(self._ne, self._A,  self._gamma_min,  self._gamma_max,  self._index,  self._DT,  self._Ngrid, self._steps ))
         return self._fgammma
    
 
@@ -122,7 +115,7 @@ class Synchronator(object):
 
         finalIntegral = s * h / (2.0)
 
-        print finalIntegral
-        print sourceIntegral
+#        print finalIntegral
+#        print sourceIntegral
         
         return finalIntegral/((1.)*sourceIntegral)
