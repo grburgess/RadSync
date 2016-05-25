@@ -14,8 +14,8 @@ import numpy
 
 
 
-os.system("g++ -shared -o libradsync.so -fPIC Synchronator/radsync.cxx -I/usr/local/include  -L/usr/local/lib -lgsl -lgslcblas")
-os.system("mv libradsync.so /usr/local/lib/")
+os.system("g++ -shared -o Synchronator/libradsync.so -fPIC Synchronator/radsync.cxx -I/usr/local/include  -L/usr/local/lib -lgsl -lgslcblas")
+os.system("cp Synchronator/libradsync.so /usr/local/lib/")
 os.system("cp Synchronator/radsync.h /usr/local/include/")
 
 ext_modules = [Extension("Synchronator/radsync_glue",["Synchronator/radsync_glue.pyx"],
